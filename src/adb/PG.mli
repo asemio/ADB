@@ -34,7 +34,9 @@ val connect : params -> pool
 
 val drain : pool -> unit Lwt.t
 
-val exec_file : Caqti_lwt.connection -> Filename.t -> unit Lwt.t
+val load_file : Caqti_lwt.connection -> Filename.t -> unit Lwt.t
+
+val load_sql : Caqti_lwt.connection -> string -> unit Lwt.t
 
 val disable_all_triggers : Caqti_lwt.connection -> unit Lwt.t
 

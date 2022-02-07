@@ -60,9 +60,7 @@ let exec conn (stmt : 'a S.stmt) =
 
 let regex_separator = Re.Perl.re {|-- \*\* --|} |> Re.compile
 
-let exec_file conn path =
-  let open Lwt.Syntax in
-  let* contents = Lwt_io.with_file path ~flags:[ O_RDONLY; O_NONBLOCK ] ~mode:Input Lwt_io.read in
+let load_sql conn contents =
   let stmts = Re.split regex_separator contents in
   Lwt_list.iter_s
     (fun (stmt : string) ->
@@ -71,6 +69,10 @@ let exec_file conn path =
       in
       exec conn query)
     stmts
+
+let load_file conn path =
+  let open Lwt.Infix in
+  Lwt_io.with_file path ~flags:[ O_RDONLY; O_NONBLOCK ] ~mode:Input Lwt_io.read >>= load_sql conn
 
 let disable_all_triggers conn =
   [%rapper execute {sql|
