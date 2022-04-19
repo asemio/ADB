@@ -1,4 +1,4 @@
-open! Core_kernel
+open! Core
 
 (** Corresponds to a Postgresql DATE column *)
 type t = Date.t [@@deriving sexp, compare, equal, yojson]

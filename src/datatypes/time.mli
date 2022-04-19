@@ -1,4 +1,4 @@
-open! Core_kernel
+open! Core
 
 (** Corresponds to a Postgresql TIMESTAMP column *)
 type t = Time.t [@@deriving sexp, compare, equal, yojson]

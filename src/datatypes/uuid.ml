@@ -1,4 +1,4 @@
-open! Core_kernel
+open! Core
 
 type t = Uuidm.t [@@deriving compare, equal]
 
@@ -9,11 +9,9 @@ let random_v4 () = Uuidm.v4_gen caml_state ()
 let sexp_of_t x = Sexp.Atom (Uuidm.to_string x)
 
 let t_of_sexp sexp =
-  begin
-    match sexp with
-    | Sexp.Atom s -> Uuidm.of_string s
-    | _ -> None
-  end
+  (match sexp with
+  | Sexp.Atom s -> Uuidm.of_string s
+  | _ -> None)
   |> Option.value_exn ~message:(sprintf "Error: invalid Uuid sexp: %s" (Sexp.to_string_hum sexp))
 
 let to_yojson x = `String (Uuidm.to_string x)

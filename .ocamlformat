@@ -1,5 +1,5 @@
-# "Asemio Style" v1.0
-# Last updated for ocamlformat 0.15.0
+# "Asemio Style" v1.1
+# Last updated for ocamlformat 0.19.0
 
 # All available options are listed.
 # An option is commented out when the value matches the default
@@ -37,7 +37,7 @@ function-indent = 0
 # function-indent-nested = never
 if-then-else = keyword-first
 # indent-after-in = 0
-indicate-multiline-delimiters = closing-on-separate-line
+# indicate-multiline-delimiters = no
 indicate-nested-or-patterns = space
 # infix-precedence = indent
 # leading-nested-match-parens = false
@@ -45,7 +45,6 @@ let-and = sparse
 # let-binding-indent = 2
 # let-binding-spacing = compact
 # let-module = compact
-# let-open = preserve
 margin = 106
 # match-indent = 0
 # match-indent-nested = never

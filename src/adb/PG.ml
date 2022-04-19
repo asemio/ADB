@@ -41,10 +41,7 @@ type pool = {
 
 let load_config ?override_password path =
   let+ config =
-    Lwt_io.with_file
-      ~flags:Unix.[ O_RDONLY; O_NONBLOCK ]
-      ~mode:Input path
-      (fun ic ->
+    Lwt_io.with_file ~flags:[ O_RDONLY; O_NONBLOCK ] ~mode:Input path (fun ic ->
         let+ s = Lwt_io.read ic in
         Sexp.of_string_conv_exn s [%of_sexp: params])
   in
@@ -151,8 +148,7 @@ let do_transaction { pool; log_statements; _ } ~f () =
       | Ok _ as res -> (
         M.commit () |> lift_caqti_error >>= function
         | Ok () -> Lwt.return res
-        | Error err1 as res -> do_rollback ~rollback:M.rollback res err1
-      )
+        | Error err1 as res -> do_rollback ~rollback:M.rollback res err1)
       (* ERROR: ROLLBACK *)
       | Error err1 as res -> do_rollback ~rollback:M.rollback res err1)
     pool

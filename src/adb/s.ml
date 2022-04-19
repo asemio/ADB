@@ -1,4 +1,4 @@
-open! Core_kernel
+open! Core
 
 type combined =
   [ `User_error of Error.t

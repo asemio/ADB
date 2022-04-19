@@ -1,4 +1,4 @@
-open! Core_kernel
+open! Core
 
 module type Storable = sig
   type t

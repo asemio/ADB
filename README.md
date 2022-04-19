@@ -6,12 +6,12 @@ Add to your OPAM file:
 ```
 # You may need to add the pin-depends section:
 pin-depends: [
-  [ "ADB.1.0.0" "git+https://github.com/asemio/ADB.git#v1.0.0" ]
+  [ "ADB.1.6.0" "git+https://github.com/asemio/ADB.git#v1.6.0" ]
 ]
 
 # Add to the depends section:
 depends: [
-  "ADB" { = "1.0.0" }
+  "ADB" { = "1.6.0" }
 ]
 ```
 
@@ -19,7 +19,7 @@ depends: [
 
 **initial_schema.ml**
 ```ocaml
-open! Core_kernel
+open! Core
 
 let created_at = Datatypes.Time.to_ptime_exn (Time.of_string "2020-01-07 10:53:00-06:00")
 
@@ -54,7 +54,7 @@ include ADB.S.Migration
 
 **example.ml**
 ```ocaml
-open! Core_kernel
+open! Core
 open! Lwt_result.Syntax
 open! Lwt.Infix
 open ADB

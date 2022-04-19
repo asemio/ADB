@@ -2,7 +2,7 @@
   (name datatypes)
   (public_name ADB.datatypes)
   (libraries
-    core_kernel
+    core
     caqti
     ppx_deriving_yojson.runtime
     uuidm

@@ -1,4 +1,4 @@
-open! Core_kernel
+open! Core
 
 type t = Yojson.Safe.t [@@deriving sexp_of, equal, yojson]
 

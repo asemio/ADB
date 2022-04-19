@@ -1,11 +1,11 @@
-open! Core_kernel
+open! Core
 
 type t = Time.t [@@deriving compare, equal]
 
-let sexp_of_t time = Sexp.Atom (Time.to_string time)
+let sexp_of_t time = Sexp.Atom (Time.to_string_iso8601_basic ~zone:Time.Zone.utc time)
 
 let t_of_sexp = function
-| Sexp.Atom s -> Time.of_string s
+| Sexp.Atom s -> Time.of_string_with_utc_offset s
 | sexp -> failwithf "Invalid serialized Time: %s" (Sexp.to_string sexp) ()
 
 let to_yojson time =
@@ -13,7 +13,7 @@ let to_yojson time =
   `String (String.slice iso 0 (-4) |> sprintf "%sZ")
 
 let of_yojson = function
-| `String s -> Ok (Time.of_string s)
+| `String s -> Ok (Time.of_string_with_utc_offset s)
 | _ -> Error (Format.sprintf "Invalid JSON for Time, expected String")
 
 let encode x =
