@@ -6,12 +6,12 @@ Add to your OPAM file:
 ```
 # You may need to add the pin-depends section:
 pin-depends: [
-  [ "ADB.1.6.0" "git+https://github.com/asemio/ADB.git#v1.6.0" ]
+  [ "ADB.1.7.0" "git+https://github.com/asemio/ADB.git#v1.7.0" ]
 ]
 
 # Add to the depends section:
 depends: [
-  "ADB" { = "1.6.0" }
+  "ADB" { = "1.7.0" }
 ]
 ```
 

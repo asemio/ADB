@@ -104,14 +104,14 @@ let combined_to_error = function
  |(`Connect_failed _ as caqti) ->
   Caqti_error.show caqti |> Error.of_string
 
-let lift_user_error err = Lwt_result.map_err (fun x -> `User_error x) err
+let lift_user_error err = Lwt_result.map_error (fun x -> `User_error x) err
 
 let lift_mixed_errors (ll : S.combined list) : ('a, S.combined) result =
   Error (`Mixed_error (ll |> List.map ~f:combined_to_error))
 
 let lift_unexpected_exn exn = Lwt.return_error (`Unexpected_exception exn)
 
-let lift_caqti_error err = Lwt_result.map_err (fun x -> `Caqti x) err
+let lift_caqti_error err = Lwt_result.map_error (fun x -> `Caqti x) err
 
 (*
 User_error: business logic error as opposed to DB or system errors.
@@ -152,7 +152,7 @@ let do_transaction { pool; log_statements; _ } ~f () =
       (* ERROR: ROLLBACK *)
       | Error err1 as res -> do_rollback ~rollback:M.rollback res err1)
     pool
-  |> Lwt_result.map_err (function
+  |> Lwt_result.map_error (function
        | `User_error err -> err
        | `Unexpected_exception exn -> raise exn
        | x -> combined_to_error x)
