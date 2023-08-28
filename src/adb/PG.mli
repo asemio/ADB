@@ -8,7 +8,7 @@ type ssl = {
 [@@deriving sexp]
 
 type host =
-  | IP     of {
+  | IP of {
       hostname: string;
       port: int;
     }

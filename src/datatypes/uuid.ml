@@ -2,7 +2,7 @@ open! Core
 
 type t = Uuidm.t [@@deriving compare, equal]
 
-let caml_state = Caml.Random.State.make (Array.init 10 ~f:(fun _ -> Random.int Int.max_value))
+let caml_state = Stdlib.Random.State.make (Array.init 10 ~f:(fun _ -> Random.int Int.max_value))
 
 let random_v4 () = Uuidm.v4_gen caml_state ()
 

@@ -10,7 +10,7 @@ type ssl = {
 [@@deriving sexp]
 
 type host =
-  | IP     of {
+  | IP of {
       hostname: string;
       port: int;
     }
@@ -30,7 +30,7 @@ type params = {
 
 module SCPT = Source_code_position.Table
 
-let transaction_count scpt = SCPT.fold scpt ~init:0 ~f:(fun ~key:_ ~data acc -> acc + data)
+let transaction_count scpt = Hashtbl.fold scpt ~init:0 ~f:(fun ~key:_ ~data acc -> acc + data)
 
 type pool = {
   pool: (Caqti_lwt.connection, S.combined) Caqti_lwt.Pool.t;
@@ -42,8 +42,8 @@ type pool = {
 let load_config ?override_password path =
   let+ config =
     Lwt_io.with_file ~flags:[ O_RDONLY; O_NONBLOCK ] ~mode:Input path (fun ic ->
-        let+ s = Lwt_io.read ic in
-        Sexp.of_string_conv_exn s [%of_sexp: params])
+      let+ s = Lwt_io.read ic in
+      Sexp.of_string_conv_exn s [%of_sexp: params] )
   in
   Option.value_map override_password ~default:config ~f:(fun password -> { config with password })
 
@@ -148,14 +148,14 @@ let do_transaction { pool; log_statements; _ } ~f () =
       | Ok _ as res -> (
         M.commit () |> lift_caqti_error >>= function
         | Ok () -> Lwt.return res
-        | Error err1 as res -> do_rollback ~rollback:M.rollback res err1)
+        | Error err1 as res -> do_rollback ~rollback:M.rollback res err1 )
       (* ERROR: ROLLBACK *)
       | Error err1 as res -> do_rollback ~rollback:M.rollback res err1)
     pool
   |> Lwt_result.map_error (function
        | `User_error err -> err
        | `Unexpected_exception exn -> raise exn
-       | x -> combined_to_error x)
+       | x -> combined_to_error x )
 
 let transaction ?no_queue ({ params = { max_pool_size; _ }; _ } as p) ~f =
   match no_queue with
@@ -166,10 +166,10 @@ let transaction ?no_queue ({ params = { max_pool_size; _ }; _ } as p) ~f =
         int SCPT.t}"
       max_pool_size here p.current_transactions ()
   | Some here ->
-    SCPT.incr p.current_transactions here;
+    Hashtbl.incr p.current_transactions here;
     Lwt.finalize (do_transaction p ~f) (fun () ->
-        SCPT.decr ~remove_if_zero:true p.current_transactions here;
-        Lwt.return_unit)
+      Hashtbl.decr ~remove_if_zero:true p.current_transactions here;
+      Lwt.return_unit )
 
 let drain { pool; _ } = Caqti_lwt.Pool.drain pool
 
@@ -181,7 +181,7 @@ let connection_uri { host; dbname = path; user; password; ssl; max_pool_size = _
   in
   let query =
     Option.value_map ssl ~default:[] ~f:(fun { key; cert; ca } ->
-        [ "sslmode", [ "verify-ca" ]; "sslkey", [ key ]; "sslcert", [ cert ]; "sslrootcert", [ ca ] ])
+      [ "sslmode", [ "verify-ca" ]; "sslkey", [ key ]; "sslcert", [ cert ]; "sslrootcert", [ ca ] ] )
   in
   Uri.make ~scheme:"postgresql" ~userinfo:(sprintf "%s:%s" user password) ~host ?port ~path ~query ()
 
